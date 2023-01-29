@@ -5,6 +5,7 @@ import { promises as fs } from "fs";
 import cors from "cors";
 import { buildSchema } from "graphql";
 import { graphqlHTTP } from "express-graphql";
+import AccountService from "./services/account.service.js";
 
 const app = express();
 const { readFile, writeFile } = fs;
@@ -30,23 +31,30 @@ const schema = buildSchema(`
     balance: Float
   }
   type Query{
-    all: [Account]
-    byId(id: Int): Account
+    allAccounts: [Account]
+    accountById(id: Int): Account
   }
 `);
 
-app.use(express.json());
-app.use(cors());
-app.use("/account", accountRouter);
+const root = {
+  allAccounts: () => AccountService.all(),
+  accountById(args) {
+    return AccountService.byId(args.id);
+  },
+};
 
 app.use(
   "/graphql",
   graphqlHTTP({
     schema: schema,
-    rootValue: null,
+    rootValue: root,
     graphiql: true,
   })
 );
+
+app.use(express.json());
+app.use(cors());
+app.use("/account", accountRouter);
 
 app.listen(3000, async () => {
   try {
