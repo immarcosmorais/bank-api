@@ -33,6 +33,7 @@ async function remove(id) {
     (account) => account.id !== parseInt(id)
   );
   await writeFile(fileName, JSON.stringify(data, null, 2));
+  return true;
 }
 
 async function update(account, id) {
