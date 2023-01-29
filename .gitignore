@@ -1,3 +1,8 @@
 *.log
 node_modules/
 accounts.json
+
+### macOS ###
+*.DS_Store
+.AppleDouble
+.LSOverride
